@@ -1,0 +1,66 @@
+
+# Makefile for Elmer
+# ----------------------------------------
+# Use external Geometry to create mesh
+# Calculate Depth and Height for Paraview
+
+EXECUTABLES = src/GroundedSolver src/Grid2DInterpolator src/USF_Contact src/FlotingShelves src/DistanceSolveRD  src/IntegratedVelocityRD src/USF_Zs src/USF_sliding src/ResultOutputSolve src/USF_BMB
+
+
+#src/FreeSurfaceSolver
+
+
+
+NumProcs=TOTPROCS
+NumProcx=PROCX
+NumProcy=PROCY
+
+InputSif=SIFFILE
+#meshresolution =RES
+
+
+
+.SUFFIXES: .f90
+
+all: clean ini grid submit
+
+grid:
+ifeq ($(NumProcs),1)
+	cp -r MMGMesh MESHPATH
+	#gmsh Mesh.geo -1 -2
+	#ElmerGrid 14 2 Mesh.msh  -autoclean
+	echo We are doing serial meshing
+else
+	#cp Mesh.geo MESHPATH
+	#gmsh MESHPATH/Mesh.geo -1 -2
+	#ElmerGrid 14 2 MESHPATH/Mesh.msh  -autoclean
+	cp -r Mesh MESHPATH
+	ElmerGrid 2 2 MESHPATH/Mesh -partition $(NumProcx) $(NumProcy) 1
+endif
+
+
+submit: ini
+
+	mpirun -n $(NumProcs) ElmerSolver_mpi
+	#ElmerSolver
+
+compile:  $(EXECUTABLES)
+	elmerf90 src/SurfTemp/SurfaceTemp.f90 -o src/SurfTemp/SurfaceTemp
+	elmerf90 src/SMB/SMB.f90 -o src/SMB/SMB
+	elmerf90 src/Erosion/Erosion.f90 -o src/Erosion/Erosion
+	elmerf90 src/BMB/BMBBeckmannGoose.f90 -o src/BMB/BMBBeckmannGoose
+	elmerf90 src/SeaLevel/SeaLevel.f90 -o src/SeaLevel/SeaLevel
+	elmerf90 src/DistanceSolveRD.f90 -o src/DistanceSolveRD
+	elmerf90 src/USF_GetFrictionHeating.F90 -o src/USF_GetFrictionHeating
+
+clean:
+	#rm -fr modelresults/*
+	#rm -fr Outline/*.vtu
+
+ini:
+	echo $(InputSif) > ELMERSOLVER_STARTINFO
+
+.f90:
+	elmerf90  -o $@ $<
+.c:
+	gcc  -o $@ $< -lm

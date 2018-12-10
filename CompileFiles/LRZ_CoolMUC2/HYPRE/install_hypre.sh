@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CMAKE=cmake
+
+HYPRESRC="$HOME/INSTALL/hypre-2.11.2/src/"
+BUILDDIR="$HYPRESRC/build"
+IDIR="$HYPRESRC/hypre"
+mkdir -p ${BUILDDIR}
+cd ${BUILDDIR}
+
+$CMAKE $HYPRESRC  \
+    -DCMAKE_INSTALL_PREFIX=$IDIR \
+    -DCMAKE_C_COMPILER=icc \
+    -DCMAKE_CXX_COMPILER=icpc \
+  	-DCMAKE_Fortran_COMPILER=ifort \
+	  -DHYPRE_SHARED:BOOL=ON \
+		-DHYPRE_SEQUENTIAL:BOOL=ON
+
+make -j4 && make install
