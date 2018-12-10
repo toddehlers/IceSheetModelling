@@ -1,4 +1,4 @@
-#
+# Script for MUMPS compilation on ZDV cluster
 #  This file is part of MUMPS 5.1.2, released
 #  on Mon Oct  2 07:37:01 UTC 2017
 #
@@ -25,7 +25,7 @@
 # You have to choose one among the following two lines depending on
 # the type of analysis you want to perform. If you want to perform only
 # sequential analysis choose the first (remember to add -Dscotch in the ORDERINGSF
-# variable below); for both parallel and sequential analysis choose the second 
+# variable below); for both parallel and sequential analysis choose the second
 # line (remember to add -Dptscotch in the ORDERINGSF variable below)
 
 #LSCOTCH    = -L$(SCOTCHDIR)/lib -lesmumps -lscotch -lscotcherr
@@ -42,7 +42,7 @@ LPORD    = -L$(LPORDDIR) -lpord
 # You have to choose one among the following two lines depending on
 # the type of analysis you want to perform. If you want to perform only
 # sequential analysis choose the first (remember to add -Dmetis in the ORDERINGSF
-# variable below); for both parallel and sequential analysis choose the second 
+# variable below); for both parallel and sequential analysis choose the second
 # line (remember to add -Dparmetis in the ORDERINGSF variable below)
 
 #LMETIS    = -L$(LMETISDIR) -lmetis
@@ -66,13 +66,13 @@ IORDERINGSC = $(IMETIS) $(IPORD) $(ISCOTCH)
 
 PLAT    =
 LIBEXT  = .a
-OUTC    = -o 
-OUTF    = -o 
+OUTC    = -o
+OUTF    = -o
 RM = /bin/rm -f
 CC = mpiicc
 FC = mpiifort
 FL = mpiifort
-AR = ar vr 
+AR = ar vr
 #RANLIB = ranlib
 RANLIB  = echo
 # Make this variable point to the path where the Intel MKL library is
@@ -89,7 +89,7 @@ INCSEQ = -I$(topdir)/libseq
 #LIBSEQ  = $(LAPACK) -L$(topdir)/libseq -lmpiseq
 LIBSEQ  =-L$(topdir)/libseq -lmpiseq
 
-LIBBLAS = -L$(MKLROOT) -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core 
+LIBBLAS = -L$(MKLROOT) -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core
 LIBOTHERS = -lpthread -qopenmp
 
 #Preprocessor defs for calling Fortran from C (-DAdd_ or -DAdd__ or -DUPPER)
@@ -98,12 +98,12 @@ CDEFS   = -DAdd_
 #Begin Optimized options
 OPTF    = -O2 -DALLOW_NON_INIT -nofor_main -fPIC # or -openmp for old compilers
 #OPTF    = -O0 -g3 -fPIC -nofor_main -DBLR_MT # or -openmp for old compilers
-OPTL    = -O2 -nofor_main -fPIC 
+OPTL    = -O2 -nofor_main -fPIC
 #OPTL    = -O0 -g3 -fPIC -nofor_main
-OPTC    = -O2 -fPIC 
+OPTC    = -O2 -fPIC
 #OPTC    = -O0 -g3 -fPIC
 #End Optimized options
- 
+
 INCS = $(INCPAR)
 LIBS = $(LIBPAR)
 LIBSEQNEEDED =
